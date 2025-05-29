@@ -46,17 +46,6 @@ app.use(cors({
 }));
 
 app.use(express.json());
-
-// Health check endpoint
-app.get('/', (req, res) => {
-  console.log('Health check request received');
-  res.status(200).json({ 
-    status: 'ok',
-    message: 'Server is running',
-    timestamp: new Date().toISOString()
-  });
-});
-
 app.use("/students", studentRoutes);
 
 // Error handling middleware
