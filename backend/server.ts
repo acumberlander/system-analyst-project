@@ -12,14 +12,13 @@ const PORT = process.env.PORT || 4000;
 const allowedOrigins = [
   "http://localhost:3000", // for dev
   "https://system-analyst-project-frontend.vercel.app",
+  "https://system-analyst-project.onrender.com",
 ];
 
-app.use(
-  cors({
-    origin: true,
-    credentials: true,
-  })
-);
+app.use(cors({
+  origin: true,
+  credentials: true
+}));
 
 // Add preflight handler
 app.options("*", cors());
