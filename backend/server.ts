@@ -10,22 +10,24 @@ const PORT = process.env.PORT || 4000;
 
 // Basic CORS config
 const allowedOrigins = [
-  "http://localhost:3000",
-  "https://system-analyst-project-frontend-8ac5n2spx.vercel.app",
-  "https://system-analyst-project-frontend.vercel.app/",
-  "https://system-analyst-project-frontend.vercel.app/students",
-  "https://system-analyst-project-backend-edj7z99b2.vercel.app/students",
-  "https://system-analyst-project-backend-edj7z99b2.vercel.app",
+  "http://localhost:3000", // for dev
+  "https://system-analyst-project-frontend.vercel.app",
 ];
 
 app.use(
   cors({
-    origin: allowedOrigins,
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error("Not allowed by CORS"), false);
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
-
+app.options("*", cors());
 app.use(express.json());
 app.use("/students", studentRoutes);
 
