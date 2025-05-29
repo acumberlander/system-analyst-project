@@ -13,6 +13,9 @@ const allowedOrigins = [
   "http://localhost:3000",
   "https://system-analyst-project-frontend-8ac5n2spx.vercel.app",
   "https://system-analyst-project-frontend.vercel.app/",
+  "https://system-analyst-project-frontend.vercel.app/students",
+  "https://system-analyst-project-backend-edj7z99b2.vercel.app/students",
+  "https://system-analyst-project-backend-edj7z99b2.vercel.app",
 ];
 
 app.use(
