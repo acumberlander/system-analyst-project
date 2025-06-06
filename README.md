@@ -127,10 +127,10 @@ npm run dev
 
 ## Deployment
 
-The application is configured for deployment on Vercel:
+The application is configured for deployment on Vercel and Render:
 
 1. Frontend: `https://system-analyst-project-frontend.vercel.app`
-2. Backend: `https://system-analyst-project-backend.vercel.app`
+2. Backend: `https://system-analyst-project.onrender.com`
 
 ## Contributing
 
