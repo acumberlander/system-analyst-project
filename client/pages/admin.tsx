@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { getStudents, deleteStudent, updateStudent } from "./api/students";
 import { Student } from "../types/student";
+import { ThreeDot } from "react-loading-indicators";
 
 export default function AdminDashboard() {
   const [students, setStudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(true);
+  const [serverIsSleep, setServerIsSleep] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [editingStudent, setEditingStudent] = useState<Student | null>(null);
 
@@ -18,11 +20,16 @@ export default function AdminDashboard() {
       console.log("data: ", data);
       setStudents(data);
       setError(null);
+      const timeout = setTimeout(() => {
+        setServerIsSleep(true);
+      }, 5000);
+      return () => clearTimeout(timeout);
     } catch (err) {
       setError("Failed to fetch students");
       console.error(err);
     } finally {
       setLoading(false);
+      setServerIsSleep(false);
     }
   };
 
@@ -30,7 +37,7 @@ export default function AdminDashboard() {
     if (window.confirm("Are you sure you want to delete this student?")) {
       try {
         await deleteStudent(id);
-        setStudents(students.filter(student => student.id !== id));
+        setStudents(students.filter((student) => student.id !== id));
         setError(null);
       } catch (err) {
         setError("Failed to delete student");
@@ -46,9 +53,11 @@ export default function AdminDashboard() {
   const handleUpdate = async (updatedStudent: Student) => {
     try {
       await updateStudent(updatedStudent);
-      setStudents(students.map(student => 
-        student.id === updatedStudent.id ? updatedStudent : student
-      ));
+      setStudents(
+        students.map((student) =>
+          student.id === updatedStudent.id ? updatedStudent : student
+        )
+      );
       setEditingStudent(null);
       setError(null);
     } catch (err) {
@@ -60,7 +69,20 @@ export default function AdminDashboard() {
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-primary text-xl">Loading...</div>
+        <div className="text-primary text-xl">
+          <ThreeDot
+            variant="bounce"
+            color="#32cd32"
+            size="medium"
+            text="Loading..."
+            textColor=""
+          />
+        </div>
+        {serverIsSleep && (
+          <div className="text-red-500 text-xl mt-4">
+            Render server is sleeping. Please wait...
+          </div>
+        )}
       </div>
     );
   }
@@ -235,4 +257,4 @@ export default function AdminDashboard() {
       </div>
     </div>
   );
-} 
+}

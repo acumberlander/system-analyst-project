@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { getStudents, deleteStudent, updateStudent, createStudent } from "../pages/api/students";
 import { Student } from "../types/student";
 import { mockStudents } from "../data/mockStudents";
+import { ThreeDot } from "react-loading-indicators";
 
 type SortField = 'name' | 'program' | 'start_term' | 'created_at' | null;
 type SortDirection = 'asc' | 'desc';
@@ -9,6 +10,7 @@ type SortDirection = 'asc' | 'desc';
 export default function AdminDashboard() {
   const [students, setStudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(true);
+  const [serverIsSleep, setServerIsSleep] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [editingStudent, setEditingStudent] = useState<Student | null>(null);
   const [isAddingMock, setIsAddingMock] = useState(false);
@@ -26,11 +28,16 @@ export default function AdminDashboard() {
       const data = await getStudents();
       setStudents(data);
       setError(null);
+      const timeout = setTimeout(() => {
+        setServerIsSleep(true);
+      }, 5000);
+      return () => clearTimeout(timeout);
     } catch (err) {
       setError("Failed to fetch students");
       console.error(err);
     } finally {
       setLoading(false);
+      setServerIsSleep(false);
     }
   };
 
@@ -181,7 +188,22 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="text-primary text-xl">Loading...</div>
+      <div className="min-h-screen bg-background flex items-center justify-start flex-col pt-28">
+        <div className="text-primary text-xl">
+          <ThreeDot
+            variant="bounce"
+            color="#016937"
+            size="medium"
+            text="Loading..."
+            textColor=""
+          />
+        </div>
+        {serverIsSleep && (
+          <div className="text-red-500 text-xl mt-4">
+            Render server is sleeping. Please wait...
+          </div>
+        )}
+      </div>
     );
   }
 
